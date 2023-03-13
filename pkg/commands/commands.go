@@ -3,16 +3,17 @@ package commands
 import (
 	"strings"
 
-	"github.com/tortuecucu/pathfinder/pkg/plan"
+	"github.com/tortuecucu/pathfinder/pkg/core"
 )
 
 type Command struct {
+	core.Runnable
 	commandName       string
 	commandParameters []string
 }
 
-func (t Command) Run(execution *plan.PlanExecution) {
-	execution.Results[t.commandName] = plan.NewResult(t, "tbd", t.commandName)
+func (t Command) Run(facts *core.FactCollection) {
+	facts.AddFact(t.commandName, "tbd", t)
 }
 func (t Command) Name() string {
 	return "command '" + t.commandName + "' args:'" + strings.Join(t.commandParameters[:], ",") + "'"

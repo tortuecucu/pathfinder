@@ -1,7 +1,7 @@
 package formatters
 
-import "github.com/tortuecucu/pathfinder/pkg/plan"
+import "github.com/tortuecucu/pathfinder/pkg/core"
 
 type Formatter interface {
-	Format(exe *plan.PlanExecution) []string
+	Format(exe *core.FactCollection) []string
 }

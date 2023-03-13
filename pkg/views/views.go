@@ -1,8 +1,8 @@
 package views
 
-import "github.com/tortuecucu/pathfinder/pkg/plan"
+import "github.com/tortuecucu/pathfinder/pkg/core"
 
 type View interface {
 	DisplayLines(lines *[]string)
-	Display(exe *plan.PlanExecution)
+	Display(exe *core.FactCollection)
 }

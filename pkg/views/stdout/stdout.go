@@ -3,8 +3,8 @@ package stdout
 import (
 	"fmt"
 
+	"github.com/tortuecucu/pathfinder/pkg/core"
 	"github.com/tortuecucu/pathfinder/pkg/formatters/text"
-	"github.com/tortuecucu/pathfinder/pkg/plan"
 )
 
 type Stdout struct{}
@@ -14,7 +14,8 @@ func (s Stdout) DisplayLines(lines *[]string) {
 		fmt.Println(line)
 	}
 }
-func (s Stdout) Display(exe *plan.PlanExecution) {
+func (s Stdout) Display(exe *core.FactCollection) {
 	formatter := text.TextFormatter{}
-	fmt.Println(formatter.Format(exe))
+	lines := formatter.Format(exe)
+	s.DisplayLines(&lines)
 }

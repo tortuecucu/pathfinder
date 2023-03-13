@@ -4,56 +4,40 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/tortuecucu/pathfinder/pkg/core"
 )
 
-type Result struct {
-	Action    Runnable
-	Category  string
-	Name      string
-	Timestamp time.Time
-	Value     interface{}
+type CollectPlan struct {
+	Name       string
+	collectors map[string]core.Runnable
 }
 
-func NewResult(test Runnable, value interface{}, name string) *Result {
-	return &Result{Name: name, Action: test, Value: value, Timestamp: time.Now()}
+func (p CollectPlan) Collectors() map[string]core.Runnable {
+	return p.collectors
 }
 
-type PlanExecution struct {
-	ActionPlan ActionPlan
-	Start      time.Time
-	End        time.Time
-	Uuid       uuid.UUID
-	Results    map[string]*Result
+func (p CollectPlan) Execute() *core.FactCollection {
+	return NewCollection(p)
 }
 
-func NewExecution(plan ActionPlan) *PlanExecution {
-	exe := &PlanExecution{ActionPlan: plan, Start: time.Now(), Uuid: uuid.New()}
-	exe.Results = make(map[string]*Result)
+func (p CollectPlan) AddCollector(c core.Runnable) {
+	p.collectors[c.Name()] = c
+}
 
-	for _, test := range plan.Actions {
+func NewPlan(name string) CollectPlan {
+	p := CollectPlan{Name: name, collectors: make(map[string]core.Runnable)}
+
+	return p
+}
+
+func NewCollection(plan core.Plan) *core.FactCollection {
+	exe := &core.FactCollection{Plan: plan, Start: time.Now(), Uuid: uuid.New()}
+	exe.Facts = make(map[string]*core.Fact)
+
+	for _, test := range plan.Collectors() {
 		test.Run(exe)
 	}
 
 	exe.End = time.Now()
 	return exe
-}
-
-type Runnable interface {
-	Run(exe *PlanExecution)
-	Name() string
-}
-
-type ActionPlan struct {
-	Name    string
-	Actions map[string]Runnable
-}
-
-func (p ActionPlan) Execute() *PlanExecution {
-	return NewExecution(p)
-}
-
-func NewPlan(name string) ActionPlan {
-	p := ActionPlan{Name: name}
-	p.Actions = make(map[string]Runnable)
-	return p
 }
